@@ -1,0 +1,18 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; <a href="{% url wflocal.views.batch %}">batch</a> &gt; <a href="{% url wflocal.views.batch %}{{ batch.name }}">{{ batch.name }}</a> &gt; add item</div>  
+{% if form.errors %}<div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ form.errors }}</p></div>{% endif %}
+
+<p>Adding to: {{ batch.name }}, {{ batch.collection.c_id }}, {{ batch.description }}</p>
+
+<form enctype="multipart/form-data"  method="POST">
+<table class="form" cellspacing="5" cellpadding="5">
+{{ item_form }}
+<tr><td colspan="2">
+<input type="submit" class="medium" value="save and add another" name="_addanother"/>
+<input type="submit" class="medium" value="save and return to batch" name="_return"/></td></tr>
+</table>
+</form>
+{% endblock %}

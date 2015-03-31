@@ -1,0 +1,31 @@
+{% extends "wflocal/base.html" %}
+{% load humanize %}
+{% block content %}
+<div id="pageTitle">workflow &gt; stats</div>
+
+<table cellpadding="15" cellspacing="10"><tr>
+<td style="vertical-align: top; background: #D0E0D0;" width="400">
+<h3>batch stats</h3>
+<table class="striped" cellpadding="8">
+<tr>
+<td>id</td>
+<td>batch</td>
+<td>description</td>
+<td>item_count</td>
+<td>file_count</td>
+<td>file_size</td>
+<td>date</td></tr>
+{% for b in batches %}<tr>
+    <td>{{ b.id }}</td>
+    <td>{{ b.name }}</td>
+    <td>{{ b.description }}</td>
+    <td>{{ b.item_count|intcomma }}</td>
+    <td>{{ b.file_count|intcomma }}</td>
+    <td>{{ b.file_size|intcomma }}</td>
+    <td>{{ b.date }}</td>
+</tr>
+{% endfor %}
+</table>
+</td></tr>
+</td></tr></table>
+{% endblock %}

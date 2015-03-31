@@ -1,0 +1,36 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; admin</div>
+
+<p>
+	<h3>manage:</h3>
+	<ul>
+	<li class="big"><a href="/django/admin/auth/user/">users</a></li>
+	<li class="big"><a href="/django/admin/core/collection/">collections</a></li>
+	<li class="big"><a href="/django/admin/core/action/">actions</a></li>
+	<li class="big"><a href="{% url wflocal.views.sequence_list %}">sequences</a></li>
+	<li class="big"><a href="/django/admin/core/property_owner/">property owners</a></li>
+	<li class="big"><a href="/django/admin/core/item_type/">item types</a></li>
+	</ul>
+    <h3>Collections needing rebuilding:</h3>
+        <ul>
+        {% if rebuilds %}
+            {% for c in rebuilds %}
+            <li>{{ c }}</li>
+            {% endfor %}
+        {% else %}
+            <li><i>none</i></li>
+        {% endif %}
+        </ul>
+
+    <h3>tasks:</h3>
+	<ul>
+	<li class="big"><a href="/django/workflow/batch/new/">load a new batch of items</a></li>
+	<li class="big"><a href="/django/workflow/collection_building/">[online] collection building</a></li>
+	<li class="big"><a href="/django/workflow/status/change/">quick status change</a></li>
+	</ul>
+	
+</p>
+
+{% endblock %}

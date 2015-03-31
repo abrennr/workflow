@@ -1,0 +1,52 @@
+{% extends "wflocal/base.html" %}
+{% load humanize %}
+{% block content %}
+<div id="pageTitle">workflow &gt; main menu</div>
+
+<table cellpadding="15" cellspacing="10"><tr>
+<td style="vertical-align: top; background: #D0E0D0;" width="400">
+<form name="form" method="GET" action="{% url wflocal.views.get_item %}">
+<h2>look up an item</h2>
+<p>
+<input type="text" name="q" class="medium" size="14" />
+<select name="lookup" class="medium">
+<option>identifier</option>
+<option>name</option>
+</select>
+</p>
+<p>
+<input type="submit" class="medium" value="go"/>
+&nbsp;
+<input type="reset" class="medium" value="clear"/>
+</form>
+</p>
+</td>
+<td style="background: #EEDEDE; vertical-align: top;" width="400">
+<h3>&#182; <a href="{% url wflocal.views.batch %}">currently active batches</a></h3>
+<h3>&#182; <a href="{% url wflocal.views.batch %}?view=all">all batches</a></h3>
+<h3>&#182; <a href="{% url wflocal.views.collection %}">collections</a></h3>
+</ul>
+    
+</td></tr>
+{% if user.is_staff %}
+<tr><td colspan="2" class="medium"><center><a href="{% url wflocal.views.admin %}"><button class="medium">admin functions</button></a></center></td></tr>
+{% endif %}
+
+<tr><td colspan="2" style="background: #D9D6D0; vertical-align: top;">
+<h3>stats</h3>
+<p><b>{{ items|intcomma }}</b> items, <b>{{ files|intcomma }} </b> files, <b>{{ batches }}</b> batches (<b>{{ active_batches }}</b> active), <b>{{ colls }}</b> collections</p>
+<p><b>last 5 transactions:</b></p>
+<table class="striped" cellpadding="8">
+<tr><td>who</td><td>what</td><td>collection</td><td>item</td><td>when</td></tr>
+{% for t in last_five %}<tr><td>{{ t.user.first_name }}</td>
+							<td><b>{{ t.description }}</b></td>
+							<td><a href="{% url wflocal.views.collection_detail  t.item.primary_collection.c_id %}">{{ t.item.primary_collection.c_id }}</a></td>
+							<td><i><a href="{% url wflocal.views.item_detail t.item.do_id %}">{{ t.item.name|truncatewords:5 }}</a></i></td>
+							<td>{{ t.timestamp|timesince }} ago</li></td>
+						</tr>
+{% endfor %}
+</table>
+<p><b><a href="{% url wflocal.views.transactions %}">all transactions</a></b></p>
+</td></tr>
+</td></tr></table>
+{% endblock %}

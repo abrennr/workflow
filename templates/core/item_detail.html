@@ -1,0 +1,104 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div id="newSearch"><form name="form" method="get" action="{% url core.views.get_item %}">look up an item by id: <input type="text" name="q" size="14" /><input type="hidden" name="lookup" value="identifier"> &nbsp; <button type="submit" class="tiny">go</button></form></div>
+
+<div id="pageTitle">workflow &gt; <a href="{% url core.views.main %}">main menu</a> &gt; item &gt; {{ item.do_id }}</div>  
+
+
+
+<div class="box">
+
+<h3>{{ item.name }} </h3>
+<p><b>identifier:</b> {{ item.do_id }}</p>
+<p><b>item type:</b> {{ item.type.name }}</p> 
+<p><b>collection(s):</b> {% for c in collections %}<a href="{% url core.views.collection_detail c.c_id %}">{{ c.name }}</a><br/> {% endfor %}</p> 
+<p><b>batch(es):</b> {% for b in batches %}<a href="{% url core.views.batch_detail b.name %}">{{ b.name }}</a><br/> {% endfor %}</p> 
+		 
+<h3><b>Last Action</b>:
+{% if transaction_list %}{% for transaction in transaction_list %}{% if forloop.last %} {{ transaction.timestamp|timesince }} ago: <i>{{ transaction.description }}</i> by <i>{{ transaction.user.first_name }}</i> {% endif %}{% endfor %}{% else %} <i>[none]</i>{% endif %}
+</h3> 
+
+
+
+
+<!-- ITEM STATUS -->
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-1">current status</a></li>
+		<li><a href="#tabs-2">transaction history ({{ transaction_list|length }})</a></li>
+		<li><a href="#tabs-3">problems ({{ problems_list|length }})</a></li>
+		<li><a href="#tabs-4">files ({{ file_list|length }})</a></li>
+	</ul>
+
+<div id="tabs-1">
+<table>
+<tr>
+{% for s in status_list %}
+<td>
+<div class="statusitem">
+{% if s.complete %}<li class="btn action complete" id="{{ item.do_id }}_{{ s.action.id }}" item="{{ item.do_id }}" action="{{ s.action.id }}" ><img src="{{ MEDIA_URL }}check.gif" height="35" width="35" /></li>
+{% else %}<li class="btn action incomplete{% if s.ready  %} ready{% endif %}" id="{{ item.do_id }}_{{ s.action.id }}" item="{{ item.do_id }}" action="{{ s.action.id }}"></li>{% endif %}
+    </div>
+</td>
+<td>{{ s.action.name }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+
+<div id="tabs-2">
+<table border="0" cellpadding="5" class="striped">
+<tr><td><b>what</b></td><td><b>who</b></td><td><b>when</b></td><td><b>timestamp</b></td></tr>
+{% for transaction in transaction_list %}
+<tr>
+<td>{{ transaction.description }} {{ transaction.action }}</td>
+<td>{{ transaction.user.first_name }}</td>
+<td>{{ transaction.timestamp|timesince }} ago</td>
+<td>{{ transaction.timestamp }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<div id="tabs-3">
+<p>{% if problems_list %}
+    <ul>
+    {% for p in problems_list %}
+        <li class="{% if p.resolved %}resolved{% else %}not_resolved{% endif %}">{{ p.time_reported|timesince }} ago, {{ p.user_reported.first_name }} reported: {{ p.description }} <a href="{% url core.views.problem_detail p.id %}">detail</a></li>      
+    {% endfor %}
+    </ul>
+   {% else %}No Problems{% endif %}
+</p>
+<p><a href="{% url core.views.problem_new item.do_id %}">report new problem</a></p></div>
+
+
+<div id="tabs-4">
+<p>{% if file_list %}
+<table border="0" cellpadding="5" class="striped">
+<tr><td><b>name</b></td><td><b>date</b></td><td><b>size</b></td><td><b>path</b></td><td><b>mime-type</td><td><b>use type</b></td><td></td></tr>
+    {% for f in file_list %}
+       	<tr><td>{{ f.name }}</td><td>{{ f.timestamp|date }}</td><td>{{ f.size_bytes|filesizeformat }}</td><td>{{ f.path }}</td><td>{{ f.mime_type }}</td><td>{{ f.use }}</td><td><a href=/django/workflow/item/{{ item.do_id }}/file/{{ f.name }}/>edit</a></td></tr>   
+    {% endfor %}
+    </table>
+   {% else %}No files{% endif %}
+</p>
+<p><a href="/django/workflow/item/{{ item.do_id }}/file/new/">add a file</a></p>
+</div>
+
+</div>
+
+<!-- END BOX -->
+</div>
+
+
+<div id="reset_dialog" class="hidden" title="reset">reset this and all following actions to "incomplete"?</div>
+<div id="action_dialog" class="hidden" title="record work">complete this action or log progress:</div>
+
+
+
+
+
+{% endblock %}

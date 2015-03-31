@@ -1,0 +1,14 @@
+{% load humanize %}
+<div class="pagination">
+        <!-- {% for key, value in request.GET.items %}filter {% ifnotequal key 'page' %}{{ key }}={{ value}}<br/>{% endifnotequal %}{% endfor %} -->
+        </p>
+
+        {% ifnotequal items.paginator.num_pages 1 %} <span class="current"> showing {{ items.start_index }} - {{ items.end_index }} of {{ items.paginator.count|intcomma }} items{% if request.GET.q %} matching <i>"{{ request.GET.q }}"</i> in {{ request.GET.lookup }}{% endif %}.</span><br/> {% endifnotequal %}
+
+        {% if items.has_previous %} <a href="?{% for key, value in request.GET.items %}{% ifnotequal key 'page' %}{{ key }}={{ value}}&{% endifnotequal %}{% endfor %}page={{ items.previous_page_number }}">&lt;&lt;</a> {% endif %}
+
+        {% ifnotequal items.paginator.num_pages 1 %} <span class="current">Page {{ items.number }} of {{ items.paginator.num_pages }}.  </span> {% endifnotequal %}
+
+        {% if items.has_next %} <a href="?{% for key, value in request.GET.items %}{% ifnotequal key 'page' %}{{ key }}={{ value}}&{% endifnotequal %}{% endfor %}page={{ items.next_page_number }}">&gt;&gt;</a> {% endif %}
+
+</div>

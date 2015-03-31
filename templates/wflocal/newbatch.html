@@ -1,0 +1,38 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+	<script type="text/javascript">
+	$(function() {
+	
+		$("#id_collection").change( function () { 
+		    date = new Date();
+		    var month = (date.getMonth() + 1);
+		    if (month < 10) { 
+		        month = "0" + month.toString(); 
+		    } else { 
+		        month = month.toString(); 
+		    }
+		    var day = date.getDate()
+   		    if (day < 10) { 
+   		        day = "0" + day.toString(); 
+   		    } else { 
+   		        day = day.toString(); 
+   		    }
+		    var tstamp = date.getFullYear().toString() + month + day;  
+            $("#id_name").val(tstamp + "-" + $("#id_collection").val());
+        });
+
+	});
+	</script>
+
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; <a href="{% url wflocal.views.admin %}">admin</a> &gt; new batch</div>  
+
+<form enctype="multipart/form-data"  method="POST">
+<table class="form" cellspacing="5" cellpadding="5">
+{{ form }}
+<tr><td colspan="2"><input type="submit" id="id_submit" value="create batch" /></td></tr>
+</form>
+</table>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+
+
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; <a href="{% url wflocal.views.item_detail item.do_id %}/">{{ item }}</a> &gt; file</div>  
+
+<form method="POST">
+<table class="form" cellspacing="5">
+
+{{ form }}
+<tr><td><input type="submit" /></td></tr>
+</table>
+</form>
+
+
+
+{% endblock %}

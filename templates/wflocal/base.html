@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>{% block title %}drl workflow{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/workflow2.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}jquery/jquery-ui.custom.css" />
+    <script type="text/javascript" src="{{ MEDIA_URL }}jquery/jquery.js"></script> 
+    <script type="text/javascript" src="{{ MEDIA_URL }}jquery/jquery-ui.js"></script> 
+
+ <script type="text/javascript">
+    
+    {% include "core/main.js" %}
+
+	$(function() {
+	
+	    $("input:first").focus();
+		$("#tabs").tabs();
+
+
+	});
+	</script>
+
+</head>
+
+<body>
+
+    <div id="container">
+  {% if user.first_name %}
+       <p class="small">you are logged in as <span class="ui-state-highlight hilight">{{ user.first_name }}</span> &gt; <a href="{% url wflocal.views.logout_view %}">logout</a></p>
+  {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+      
+  {% if user.first_name %}
+    <div id="footer">
+        <p class="small">you are logged in as <span class="ui-state-highlight hilight">{{ user.first_name }}</span> &gt; <a href="{% url wflocal.views.logout_view %}">logout</a></p>
+    </div>
+  {% endif %}
+
+</body>
+</html>

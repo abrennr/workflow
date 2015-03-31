@@ -1,0 +1,55 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+
+<div id="newSearch"><form name="form" method="get" action="{% url core.views.get_item %}">look up another item: <input type="text" name="item_id" size="14" /> &nbsp; <button type="submit" class="tiny">go</button></form></div>
+
+<div id="pageTitle">drl workflow &gt; <a href="{% url core.views.main %}">main menu</a> &gt; item</div>  
+
+
+<div id="facets">
+<p><b>filter results:</b></p>
+{% for facet, items in facet_block.items %}
+  <p>{{ facet }}</p>
+     <ul>
+     {% for label, href in items.items %}
+     <li><a href="?{{ href }}">{{ label }}</a></li>
+     {% endfor %}
+     </ul>
+ {% endfor %}
+</div>
+
+
+<div id="body_content"> 
+
+{% include "core/pager_nav.html" %}
+<table border="0" cellpadding="8" class="striped">
+<tr>
+ <td><b>Item ID</b></td>
+ <td><b>Title</b></td>
+ <td><b>Type</b></td>
+ <td><b>Primary Collection</b></td>
+
+</tr>
+
+{% for item in items.object_list %}
+<tr>
+<td><a href="{% url core.views.item_detail item.do_id %}">{{ item.do_id }}</a></td>
+<td>{{ item.name }}</td>
+<td>{{ item.type.name }}</td>
+<td>{{ item.primary_collection.name }}</td>
+
+</tr>
+{% endfor %}
+
+</table>
+
+{% include "core/pager_nav.html" %}
+
+</div>
+
+
+
+
+{% endblock %}

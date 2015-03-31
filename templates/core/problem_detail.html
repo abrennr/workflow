@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+
+
+
+<div id="pageTitle">workflow &gt; <a href="{% url core.views.main %}">main menu</a> &gt; <a href="/django/workflow/item/{{ form.item.do_id }}">{{ form.item.do_id }}</a> &gt; problem</div>  
+
+{% if problem.resolved %}
+<table class="form" cellspacing="5">
+<tr><td>item: </td><td>{{ problem.item }}</td></tr>
+<tr><td>reported by: </td><td>{{ problem.user_reported.first_name }}, {{ problem.time_reported }}</td></tr>
+<tr><td>description: </td><td>{{ problem.description }}</td></tr>
+<tr><td>resolved?</td><td>yes</td></tr>
+<tr><td>notes: </td><td>{{ problem.notes_resolved }}</td></tr>
+<tr><td>resolved by: </td><td>{{ problem.user_resolved.first_name }}, {{ problem.time_resolved }}</td></tr>
+</table>
+{% else %}
+<table class="form" cellspacing="5">
+<form method="POST">
+<tr><td>{{ form.item.label_tag }}</td><td>{{ problem.item_do }}</td></tr>
+<tr><td>{{ form.user_reported.label_tag }}</td><td>{{ problem.user_reported.first_name }}</td></tr>
+<tr><td>{{ form.description.label_tag }}</td><td>{{ problem.description }}</td></tr>
+<tr><td>{{ form.resolved.label_tag }}</td><td>{{ form.resolved }}</td></tr>
+<tr><td>{{ form.notes_resolved.label_tag }}</td><td>{{ form.notes_resolved }}</td></tr>
+<tr><td>{{ form.user_resolved.label_tag }}</td><td>{{ form.user_resolved }}</td></tr>
+<tr><td>{{ form.time_resolved.label_tag }}</td><td>{{ form.time_resolved }}</td></tr>
+<tr><td colspan="2"><input type="submit" class="ui-widget" /></td></tr>
+</table>
+</form>
+{% endif %}
+
+
+
+
+
+{% endblock %}

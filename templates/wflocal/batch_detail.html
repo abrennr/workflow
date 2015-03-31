@@ -1,0 +1,96 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+{% load core_extras %}
+
+
+ <div id="newSearch"><form name="form" method="get" action="{% url wflocal.views.get_item %}">look up an item by id: <input type="text" name="q" size="14" /><input type="hidden" name="lookup" value="identifier"> &nbsp; <button type="submit" class="tiny">go</button></form> </div>
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; <a href="{% url wflocal.views.batch %}">batch</a> &gt; {{ batch.name }}</div>  
+
+{% ifequal new "success" %}<div class="ui-widget"><div class="ui-state-highlight ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-circle-check" style="float: left; margin-right: 0.3em;"></span>Congratulations!  Your new batch was successfully created.</p></div></div><p>&nbsp;</p>{% endifequal %}
+
+
+<div id="facets">
+<p><b>filter results:</b></p>
+  <p>ready for:</p>
+      <ul>
+     {% for a in action_facet %}
+     {% if a.count_ready  %}<li><a href="?&ready_action={{ a.id }}">{{ a.name }} ({{ a.count_ready }})</a></li>{% endif %}
+      {% endfor %}
+      {% if request.GET.ready_action %}
+      <a href="?ready_action=">[all actions]</a>
+      {% endif %}
+      </ul>
+
+  <p>problems:</p>
+      <ul>
+     {% if problem_facet %}
+     <li><a href="?&has_problem=True">{{ problem_facet }} items</a></li>
+      {% if request.has_problem %}
+      <a href="?last_action=">[clear]</a>
+      {% endif %}
+	  {% else %}
+		<li>no problems</li>
+	  {% endif %}
+      </ul>
+</div>
+
+<div id="body_content">
+<h3>{{ batch.name }}</h3>
+<p>description: {{ batch.description }}</p>
+<p>
+date: {{ batch.date|date:"M d, Y" }} &nbsp; collection: <a href="{% url wflocal.views.collection %}{{ batch.collection.c_id }}">{{ batch.collection }}</a>
+&nbsp; items: {{ batch.item_count }}</p>
+<p><a href="{% url wflocal.views.batch %}{{ batch.name }}/change_status/">batch change item status</a> | <a href="{% url wflocal.views.batch %}{{ batch.name }}/add_items/">add more items to this batch</a> | <a href="{% url wflocal.views.batch %}{{ batch.name }}/add_item/">add a single item to this batch</a></p>
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">items</a></li>
+        <li><a href="#tabs-2">batch specs</a></li>
+    </ul>
+
+<div id="tabs-1">
+<table>
+		 
+<p>{% include "core/pager_nav.html" %}</p>
+<table border="0" cellpadding="8" class="striped">
+<thead>
+  <tr>
+<th> </th>
+
+<th>item id</th>
+<th>name</th>
+<th>ready for</th>
+<th>last action</th>
+<th>when</th>
+<th>who</th>
+<th>files</th>
+  </tr>
+</thead>
+{% for item in items.object_list %}
+<tr{% if item.has_problem %} class="ui-state-error"{% endif %}>
+<td><input type="checkbox" name="checked" value="{{ item.item.do_id }}" /></td>
+<td><a href="{% url wflocal.views.item %}{{ item.item.do_id }}">{{ item.item.do_id }}</a></td>
+<td width="350">{{ item.item.name }}{{ item.item.item_file.name }}</td>
+
+    <td {% if item.ready_action %}class="action ready"{% endif %} id="{{ item.item.do_id }}_{{ item.ready_action.id }}" item="{{ item.item.do_id }}" action="{{ item.ready_action.id }}">{{ item.ready_action|default:"-" }}</td>
+    <td>{{ item.last_transaction.description|default:"-" }} </td>
+    <td>{{ item.last_transaction.timestamp|default:"-" }} </td>
+    <td>{{ item.last_transaction.user.first_name|default:"-" }} </td>
+	<td>{{ item.first_file }}{% if item.file_count %}.. [{{ item.file_count }} total]{% endif %}</td>
+
+</tr>
+{% endfor %}
+</table>
+{% include "core/pager_nav.html" %}
+</div>
+<div id="tabs-2">
+<table>{{ batch_form }}</table>
+</div>
+</div>
+
+<div id="reset_dialog" class="hidden" title="reset">reset this and all following actions to "incomplete"?</div>
+<div id="action_dialog" class="hidden" title="record work">complete this action or log progress:</div>
+
+{% endblock %}

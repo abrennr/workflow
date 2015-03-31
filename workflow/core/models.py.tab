@@ -1,0 +1,240 @@
+from django.db import models
+from django.contrib.auth.models import User
+from django import forms
+import StringIO
+
+MIME_TYPE_CHOICES = (
+    ('IMAGE_TIFF', 'image/tiff'),
+    ('IMAGE_JPEG', 'image/jpeg'),
+    ('IMAGE_JP2', 'image/jp2'),
+    ('IMAGE_GIF', 'image/gif'),
+    ('TEXT_CSV', 'text/csv'),
+    ('TEXT_HTML', 'text/html'),
+
+)
+
+FILE_USE_CHOICES = (
+    ('MASTER', 'master'),
+    ('THUMB', 'thumbnail'),
+    ('OTHER', 'other'),
+)
+	
+
+
+class WorkflowBatchFileTab(forms.FileField):
+	def clean(self, data, initial=None):
+		"""
+		Check that the file uploaded contains properly formatted data, 
+		i.e. tab-delimited records with at least an indentifier and a
+		title field.  The identifier must not already exist in the system.
+		"""
+	        super(forms.FileField, self).clean(initial or data)
+	        if not self.required and data in EMPTY_VALUES:
+	            return None
+	        elif not data and initial:
+	            return initial
+	
+	        # UploadedFile objects should have name and size attributes.
+	        try:
+	            file_name = data.name
+	            file_size = data.size
+	        except AttributeError:
+	            raise ValidationError(self.error_messages['invalid'])
+	
+	        if not file_name:
+	            raise ValidationError(self.error_messages['invalid'])
+	        if not file_size:
+	            raise ValidationError(self.error_messages['empty'])
+
+		conflicting_ids = []
+		duplicate_ids = []
+		seen_ids = {}
+		for line in data.__iter__():
+			try:
+				item_id, item_title = line.split('\t')
+			except:
+				raise forms.ValidationError('The file does not seem to be in the expected tab-delimited format.')
+			try: 
+				Item.objects.get(pk=item_id)
+				conflicting_ids.append(item_id)
+			except Item.DoesNotExist:
+				pass
+			try: 
+				seen_ids[item_id]
+				duplicate_ids.append(item_id)
+			except:
+				seen_ids[item_id] = 1
+		if len(conflicting_ids) > 0:
+			raise forms.ValidationError('Items in the data file conflict with existing item identifiers: ' + ', '.join(conflicting_ids))	
+		if len(duplicate_ids) > 0:
+			raise forms.ValidationError('Items in the data file include duplicate item identifiers: ' + ', '.join(duplicate_ids))
+		
+		return data
+
+class Collection(models.Model):
+	id = models.CharField(max_length=64, primary_key=True)
+	name = models.CharField(max_length=255)
+	def __unicode__(self):
+		return self.name
+
+# Actions that can be required by items
+class Action(models.Model):
+	name = models.CharField(max_length=64)
+	description = models.TextField()
+	def __unicode__(self):
+		return self.name
+
+class Item_Type(models.Model):
+	name = models.CharField(max_length=64)
+	description = models.TextField()
+	def __unicode__(self):
+		return self.name
+
+class Property_Owner(models.Model):
+	name = models.CharField(max_length=64)
+	description = models.TextField()
+	def __unicode__(self):
+		return self.description
+
+# suggested id value is combination of collection id and date
+class Batch(models.Model):
+	id = models.CharField(max_length=64, primary_key=True)
+	collection = models.ForeignKey(Collection)
+	type = models.ForeignKey(Item_Type)
+	property_owner = models.ForeignKey(Property_Owner)
+	description = models.TextField(blank=True)
+	item_count = models.IntegerField(blank=True, null=True, editable=False)
+	date = models.DateField(auto_now_add=True)
+	def __unicode__(self):
+		return self.id
+
+class Item(models.Model):
+	id = models.CharField(max_length=64, primary_key=True)
+	name = models.CharField(max_length=255)
+	type = models.ForeignKey(Item_Type)
+	property_owner = models.ForeignKey(Property_Owner)
+	def __unicode__(self):
+		return self.name
+	def set_action_complete(self, action, complete='True'):
+		ias = self.item_actions_status_set.get(action=action)
+		if complete == 'True':
+			if (not ias.ready):
+				raise Exception('item \"' + self.id + '\" is not ready to have action \"' + action.name + '\" completed.')
+			ias.complete = True
+			ias.save()
+		else:
+			ias.complete = False
+			ias.ready = True
+			ias.save()
+			while (ias.get_next()):
+				ias = ias.get_next()
+				ias.complete = False
+				ias.ready = False
+				ias.save()
+
+	def set_action_ready(self, action, ready='True'):
+		status = self.item_actions_status_set.get(action=action)
+		if ready == 'True':
+			status.ready = True
+		else:
+			status.ready = False
+		status.save()
+
+	def set_next_action_ready(self, action, ready='True'):
+		ias = self.item_actions_status_set.get(action=action)
+		if (ias.get_next()):
+			next_ias = ias.get_next()
+			next_ias.ready = True
+			next_ias.save()
+			
+# Item_File associates a file with an item
+class Item_File(models.Model):
+	item = models.ForeignKey(Item)
+	name = models.CharField(max_length=255)
+	path = models.CharField(max_length=255, blank=True, null=True)
+	host = models.CharField(max_length=255, blank=True, null=True)
+	size_bytes = models.IntegerField(blank=True, null=True)
+	mime_type = models.CharField(max_length=255, choices=MIME_TYPE_CHOICES)
+	use = models.CharField(max_length=255, choices=FILE_USE_CHOICES)
+	def __unicode__(self):
+		return self.name
+
+# linking table for items belonging to collections
+class Collection_Item(models.Model):
+	item = models.ForeignKey(Item)
+	collection = models.ForeignKey(Collection)
+
+# linking table for items belonging to batches 
+class Batch_Item(models.Model):
+	item = models.ForeignKey(Item)
+	batch = models.ForeignKey(Batch)
+
+# linking table to hold item status
+class Item_Actions_Status(models.Model):
+	item = models.ForeignKey(Item)
+	action = models.ForeignKey(Action)
+	order = models.IntegerField()
+	ready = models.BooleanField()
+	complete = models.BooleanField()
+	def get_next(self):
+		try:
+			next_order = self.order + 1
+			return Item_Actions_Status.objects.get(order=next_order, item=self.item)
+		except:
+			return False
+
+# transaction logs what users do to items 
+class Transaction(models.Model):
+	item = models.ForeignKey(Item)
+	user = models.ForeignKey(User)
+	description = models.TextField()
+	timestamp = models.DateTimeField(auto_now_add=True)
+
+class Problem(models.Model):
+	item = models.ForeignKey(Item)
+	user_reported = models.ForeignKey(User, related_name='user_reported')
+	time_reported = models.DateTimeField(auto_now_add=True)
+	description = models.TextField()
+	resolved = models.BooleanField()
+	user_resolved = models.ForeignKey(User, related_name='user_resolved', null=True, blank=True)
+	time_resolved = models.DateTimeField(null=True, blank=True)
+	notes_resolved = models.TextField(null=True, blank=True)
+
+# this is a convenience table to join data for ease in accessing current status
+class Item_Current_Status(models.Model):
+	item = models.ForeignKey(Item)
+	last_transaction = models.ForeignKey(Transaction, null=True)
+	ready_action = models.ForeignKey(Action, null=True)
+	has_problem = models.BooleanField(default=False)
+
+class BatchForm(forms.ModelForm):
+    	class Meta:
+		model = Batch
+		fields = ['type', 'collection', 'property_owner', 'id', 'description',]
+	file = WorkflowBatchFileTab()
+	actions = forms.CharField()
+	actions.widget = forms.HiddenInput()
+		
+class ChangeStatusSetupForm(forms.ModelForm):
+	class Meta:
+		model = Item_Actions_Status
+		fields = ['action', 'complete']
+
+class ChangeStatusForm(forms.Form):
+	item = forms.CharField()
+
+
+class ReportProblemForm(forms.Form):
+	item = forms.CharField()
+	description = forms.CharField()
+
+class ProblemForm(forms.ModelForm):
+	class Meta:
+		model = Problem
+		fields = ['resolved', 'notes_resolved']
+
+class ItemFileForm(forms.ModelForm):
+	class Meta:
+		model = Item_File
+		fields = ['name', 'mime_type', 'use']
+

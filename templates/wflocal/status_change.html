@@ -1,0 +1,17 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; <a href="{% url wflocal.views.admin %}">admin</a> &gt; <a href="{% url wflocal.views.setup_status_change %}">quick status change</a> &gt; set {{ action }} to <i>{% ifequal complete "True" %}complete{% else %}incomplete{% endifequal %}</i></div>  
+
+<form method="POST">
+<table>
+
+{{ form }}
+</table>
+<input type="hidden" name="user" value="{{ user.id }}" />
+<p><input type="submit" value="submit" /></p>
+</form>
+
+{% endblock %}

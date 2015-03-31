@@ -1,0 +1,56 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+	<script type="text/javascript">
+	$(function() {
+	
+		$("#id_collection").change( function () { 
+		    date = new Date();
+		    var month = (date.getMonth() + 1);
+		    if (month < 10) { 
+		        month = "0" + month.toString(); 
+		    } else { 
+		        month = month.toString(); 
+		    }
+		    var day = date.getDate()
+   		    if (day < 10) { 
+   		        day = "0" + day.toString(); 
+   		    } else { 
+   		        day = day.toString(); 
+   		    }
+		    var tstamp = date.getFullYear().toString() + month + day;  
+            $("#id_id").val(tstamp + "-" + $("#id_collection").val());
+        });
+
+		$('#add_action').click( function () {
+			var n = parseInt($('#actions_table tr:last-child td:first').text()) + 1;
+			$('#actions_table').append('<tr><td>' + n + '</td><td><select>{% for a in actions %}<option value="{{ a.id }}">{{ a }}</option>{% endfor %}</select></td></tr>');
+		});
+
+		$('#remove_action').click( function () {
+			$('#actions_table tr:last-child').remove();
+		});
+
+		$('form').submit( function () {
+			var actions_arr = [];
+			$("select", "#actions_table").each(function () {
+				var v = $(this).val();
+				actions_arr.push(v);
+			});
+			var actions_string = actions_arr.join(',');
+			$("#id_actions").val(actions_string);
+		});
+	});
+	</script>
+
+
+<div id="pageTitle">workflow &gt; batch specifications</div>  
+
+<form method="POST">
+<table class="form" cellspacing="5" cellpadding="5">
+{{ batch_form }}
+</form>
+</table>
+<div id="actions_display"></div>
+{% endblock %}

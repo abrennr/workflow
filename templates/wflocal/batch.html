@@ -1,0 +1,94 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+{% load core_extras %}
+
+
+<div id="newSearch"><form name="form" method="get" action="{% url wflocal.views.item %}">look up another item: <input type="text" name="item_id" size="14" /> &nbsp; <button type="submit" class="tiny">go</button></form></div>
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; batch</div>  
+
+
+
+
+
+<div id="facets">
+<p><b>filter results:</b></p>
+<p>collection:</p>
+	<ul>
+	{% for c in collection_facet %}
+	<li><a href="?type={{ request.GET.type }}&property_owner={{ request.GET.property_owner }}&collection={{ c.id }}">{{ c.c_id }}</a></li>
+	{% endfor %}
+	{% if request.GET.collection %}
+	<a href="?type={{ request.GET.type }}&property_owner={{ request.GET.property_owner }}&collection=">[all collections]</a>
+	{% endif %}
+	</ul>
+<p>item type:</p>
+	<ul>
+	{% for t in type_facet %}
+	<li><a href="?type={{ t.id }}&property_owner={{ request.GET.property_owner }}&collection={{ request.GET.GET.collection }}">{{ t.name }}</a></li>
+	{% endfor %}
+	{% if request.GET.type %}
+	<a href="?type=&property_owner={{ request.GET.property_owner }}&collection={{ request.GET.collection }}">[all item types]</a>
+	{% endif %}
+	</ul>
+<p>property owner:</p>
+	<ul>
+	{% for p in property_owner_facet %}
+	<li><a href="?type={{ request.GET.type }}&property_owner={{ p.id }}&collection={{ request.GET.GET.collection }}">{{ p.description }}</a></li>
+	{% endfor %}
+	{% if request.GET.property_owner %}
+	<a href="?type={{ request.GET.type }}&property_owner=&collection={{ request.GET.collection }}">[all property owners]</a>
+	{% endif %}
+	</ul>
+</div>
+
+<div id="body_content">
+<table border="0" cellpadding="5" class="striped">
+<thead>
+  <tr>
+	<th>active?</th>
+	<th>priority</th>
+	<th>id</th>
+	<th>date</th>
+	<th>collection</th>
+	<th>content type</th>
+	<th>prop. owner</th>
+	<th>items</th>
+	<th>notes</th>
+	<th>status</th>
+  </tr>
+</thead>
+
+{% for batch in filter %}
+<tr>
+<td><input type="checkbox" class="batch_active_status" batch="{{ batch.id }}" {% if batch.active %}checked="checked"{% endif %} /></td>
+<td>{{ batch.priority }}</td>
+<td><a href="{% url wflocal.views.batch_detail batch.name %}">{{ batch.name }}</a></td>
+<td>{{ batch.date|date:"M d, Y" }}</td>
+<td>{{ batch.collection.c_id }}</td>
+<td>{{ batch.type }}</td>
+<td>{{ batch.property_owner.name }}</td>
+<td>{{ batch.item_count }}</td>
+<td class="tiny">{{ batch.description }}</td>
+<td class="tiny">
+<ul>
+{% if batch.ready_actions %}
+	{% for action in batch.ready_actions %}
+		<li><a href="{% url wflocal.views.batch_detail batch.name %}?ready_action={{ action.id }}">{{ action }} ({{ action.count }})</a></li>
+	{% endfor %}
+{% else %}
+	<span class="hilight">DONE!</span>
+{% endif %}
+</ul></td>
+</tr>
+{% endfor %}
+
+</table>
+</div>
+
+
+
+
+{% endblock %}

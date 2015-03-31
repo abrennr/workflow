@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+
+<div id="pageTitle">workflow &gt; <a href="{% url core.views.main %}">main menu</a> &gt; <a href="/django/workflow/admin/">admin</a> &gt; quick status change</div>  
+
+<p>select the action and the status to change</p>
+
+<form method="POST">
+<table>
+
+{{ form }}
+</table>
+<p><input type="submit" value="submit" /></p>
+</form>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+{% load core_extras %}
+
+
+ <div id="newSearch"><form name="form" method="get" action="{% url core.views.get_item %}">look up an item by id: <input type="text" name="q" size="14" /><input type="hidden" name="lookup" value="identifier"> &nbsp; <button type="submit" class="tiny">go</button></form> </div>
+
+<div id="pageTitle">workflow &gt; <a href="{% url core.views.main %}">main menu</a> &gt; transactions</div>  
+
+{% ifequal new "success" %}<div class="ui-widget"><div class="ui-state-highlight ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-circle-check" style="float: left; margin-right: 0.3em;"></span>Congratulations!  Your new batch was successfully created.</p></div></div><p>&nbsp;</p>{% endifequal %}
+
+<div id="body_content">
+		 
+<p>{{ transactions.item_count }} transactions - showing {{ items.start_index }} - {{ items.end_index }} {% include "core/pager_nav.html" %}
+<table border="0" cellpadding="8" class="striped">
+<thead>
+<tr><td>who</td><td>what</td><td>collection</td><td>item</td><td>when</td></tr>
+</thead>
+{% for t in items.object_list %}<tr><td>{{ t.user.first_name }}</td>
+ <td><b>{{ t.description }}</b></td>
+ <td><a href="/django/workflow/collection/{{ t.item.primary_collection.c_id }}/">{{ t.item.primary_collection.c_id }}</a></td>
+ <td><i><a href="/django/workflow/item/{{ t.item.do_id }}">{{ t.item.name|truncatewords:7 }}</a></i></td>
+ <td>{{ t.timestamp|timesince }} ago</li></td>
+ </tr>
+{% endfor %}
+
+</table>
+{% include "core/pager_nav.html" %}
+</div>
+
+
+<div id="reset_dialog" class="hidden" title="reset">reset this and all following actions to "incomplete"?</div>
+<div id="action_dialog" class="hidden" title="record work">complete this action or log progress:</div>
+
+{% endblock %}

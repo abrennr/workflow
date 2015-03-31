@@ -1,0 +1,39 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+
+
+<div id="newSearch"><form name="form" method="get" action="{% url wflocal.views.item %}">look up another item: <input type="text" name="item_id" size="14" /> &nbsp; <button type="submit" class="tiny">go</button></form></div>
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; item type</div>  
+
+
+
+<div class="box">
+
+<h3>all item types</h3>
+<table border="0" cellpadding="5" class="striped">
+<tr>
+ <td><b>type</b></td>
+ <td><b>description</b></td>
+</tr>
+
+{% for it in item_types %}
+<tr>
+<td><a href="{% url wflocal.views.item_type_detail it.id %}">{{ it.name }}</a></td>
+<td>{{ it.description }}</td>
+
+</tr>
+{% endfor %}
+
+</table>
+
+
+<!-- END BOX -->
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+	<script type="text/javascript">
+	$(function() {
+	
+		$('#add_action').click( function () {
+			var n = parseInt($('#actions_table tr:last-child td:first').text()) + 1;
+			$('#actions_table').append('<tr><td>' + n + '</td><td><select>{% for a in actions %}<option value="{{ a.id }}">{{ a }}</option>{% endfor %}</select></td></tr>');
+		});
+
+		$('#remove_action').click( function () {
+			$('#actions_table tr:last-child').remove();
+		});
+
+		$('form').submit( function () {
+			var actions_arr = [];
+			$("select", "#actions_table").each(function () {
+				var v = $(this).val();
+				actions_arr.push(v);
+			});
+			var actions_string = actions_arr.join(',');
+			$("#id_actions").val(actions_string);
+		});
+	});
+	</script>
+
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; <a href="{% url wflocal.views.admin %}">admin</a> &gt; <a href="{% url wflocal.views.sequence_list %}">sequence</a> &gt; {{ sequence.name }}</div>  
+
+<form method="POST">
+<table class="form" cellspacing="5" cellpadding="5">
+    {% if workflow_sequence_form.name.errors %}
+        <tr>
+            <td colspan="2">
+                <div class="ui-widget">
+                    <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;">
+                        <p>
+                            <span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
+                            {{ workflow_sequence_form.name.errors }}
+                        </p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+<tr><td><label name="">workflow sequence name</label></td><td>{{ workflow_sequence_form.name }}</td></tr>
+{% if workflow_sequence_form.description.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ workflow_sequence_form.description.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">notes / description (optional)</label></td><td>{{ workflow_sequence_form.description }}</td></tr>
+{% if workflow_sequence_form.actions.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ workflow_sequence_form.actions.errors }}</p></div></div></td></tr>{% endif %}
+{% if seq_actions %}
+<tr><td> </td><td><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>NOTE: changing or updating sequence actions here will NOT affect any workflow items that already exist.</p></div></div></td></tr>
+{% endif %}
+<tr><td>actions</td>
+<td bgcolor="#EFDFDF">
+<table id="actions_table" cellpadding="6">
+<tr><th>order</th><th>action</th></tr>
+{% if seq_actions %}
+	{% for s_a in seq_actions %}
+	<tr>
+        <td>{{ s_a.order }}</td>
+        <td><select name="actions">{% for a in actions %}<option value="{{ a.id }}"{% ifequal s_a.action.name a.name %} selected="yes"{% endifequal %}>{{ a }}</option>{% endfor %}</select></td>
+    </tr>
+	{% endfor %}
+	</table>
+    <a href="#" id="add_action">add another action</a> | <a href="#" id="remove_action">remove last action</a>
+    </td>
+</tr>
+<tr><td colspan="2">{{ workflow_sequence_form.this_id }}{{ workflow_sequence_form.actions }}<input type="submit" size="+2" id="id_submit" value="update workflow_sequence" /></td></tr>
+{% else %}
+<tr><td>1</td><td><select name="actions">{% for a in actions %}<option value="{{ a.id }}">{{ a }}</option>{% endfor %}</select></td></tr>
+</table>
+<a href="#" id="add_action">add another action</a> | <a href="#" id="remove_action">remove last action</a>
+</td></tr>
+<tr><td colspan="2">{{ workflow_sequence_form.actions }}<input type="submit" class="medium" id="id_submit" value="create sequence" /></td></tr>
+{% endif %}
+</table>
+</form>
+<div id="actions_display"></div>
+{% endblock %}

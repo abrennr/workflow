@@ -1,0 +1,19 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div id="pageTitle">workflow &gt; <a href="{% url core.views.main %}">main menu</a> &gt; <a href="/django/workflow/batch">batch</a> &gt; <a href="/django/workflow/batch/{{ batch.name }}">{{ batch.name }}</a> &gt; add item</div>  
+{% if form.errors %}<div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ form.errors }}</p></div>{% endif %}
+
+<form enctype="multipart/form-data"  method="POST">
+<table class="form" cellspacing="5" cellpadding="5">
+<tr><td><label name="">batch identifier</label></td><td>{{ batch.name }}</td></tr>
+<tr><td><label name="">collection:</label></td><td>{{ batch.collection.c_id }}</td></tr>
+<tr><td><label name="">notes / description</label></td><td>{{ batch.description }}</td></tr>
+{{ item_form }}
+<tr><td colspan="2">
+<input type="submit" class="medium" value="save and add another" name="_addanother"/>
+<input type="submit" class="medium" value="save and return to batch" name="_return"/></td></tr>
+</table>
+</form>
+{% endblock %}

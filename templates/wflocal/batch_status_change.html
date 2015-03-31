@@ -1,0 +1,37 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; <a href="{% url wflocal.views.batch %}">batch</a> &gt; <a href="{% url wflocal.views.batch_detail batch.name %}">{{ batch.name }}</a> &gt; status change </div> 
+
+<h3>complete an action for items that are ready:</h3>
+<table>
+{% for action in actions %}
+	{% if action.count_ready %}
+	<tr><td>{{ action }} ({{ action.count_ready }} items ready)</td>
+	<td><form method="POST" action="{% url wflocal.views.batch_status_change batch.name %}">
+	<input type="hidden" name="user" value="{{ user.id }}" />
+	<input type="hidden" name="action" value="{{ action.id }}" />
+	<input type="hidden" name="complete" value="True" />
+	<input type="submit" value="complete the action for these items" />
+	</form></td></tr>
+	{% endif %}
+{% endfor %}
+</table>
+<p><br /></p>
+<h3>reset ALL items back to an action:</h3>
+<table>
+{% for action in actions %}
+	{% if action.count_complete %}
+	<tr><td>{{ action }} ({{ action.count }} total, {{ action.count_complete }} completed, {{ action.count_ready }} ready)</td>
+	<td><form method="POST" action="{% url wflocal.views.batch_status_change batch.name %}">
+	<input type="hidden" name="user" value="{{ user.id }}" />
+	<input type="hidden" name="action" value="{{ action.id }}" />
+	<input type="hidden" name="complete" value="False" />
+	<input type="submit" value="reset these items BACK to this action" />
+	</form></td></tr>
+	{% endif %}
+{% endfor %}
+</table>
+{% endblock %}

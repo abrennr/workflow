@@ -1,0 +1,116 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+	<script type="text/javascript">
+	$(function() {
+	
+		$("#id_collection").change( function () { 
+		    date = new Date();
+		    var month = (date.getMonth() + 1);
+		    if (month < 10) { 
+		        month = "0" + month.toString(); 
+		    } else { 
+		        month = month.toString(); 
+		    }
+		    var day = date.getDate()
+   		    if (day < 10) { 
+   		        day = "0" + day.toString(); 
+   		    } else { 
+   		        day = day.toString(); 
+   		    }
+		    var tstamp = date.getFullYear().toString() + month + day;  
+            $("#id_name").val(tstamp + "-" + $("#id_collection").val());
+        });
+
+	});
+	</script>
+
+
+<div id="pageTitle">workflow &gt; <a href="{% url core.views.main %}">main menu</a> &gt; <a href="/django/workflow/admin">admin</a> &gt; new batch</div>  
+
+<form enctype="multipart/form-data"  method="POST">
+<table class="form" cellspacing="5" cellpadding="5">
+{% if batch_form.collection.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.collection.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">collection:</label></td><td>{{ batch_form.collection }}</td></tr>
+{% if batch_form.type.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.type.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">content type:</label></td><td>{{ batch_form.type }}</td></tr>
+{% if batch_form.property_owner.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.property_owner.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">property owner</label></td><td>{{ batch_form.property_owner }}</td></tr>
+{% if batch_form.name.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.name.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">batch identifier</label></td><td>{{ batch_form.name }}</td></tr>
+{% if batch_form.description.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.description.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">notes / description (optional)</label></td><td>{{ batch_form.description }}</td></tr>
+{% if batch_form.sequence.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.sequence.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">sequence of actions</label></td><td>{{ batch_form.sequence }}</td></tr>
+<tr><td>load items into this batch now, with csv file? (optional)</td><td>{{ batch_form.has_file }}</td></tr>
+{% if batch_form.file.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.file.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">upload item records<br />(csv text):</label></td><td>{{ batch_form.file }}</td></tr>
+<tr><td><label name="">priority (1-10)</label></td><td>{{ batch_form.priority }}</td></tr>
+{% if batch_form.priority.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.priority.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">source identifier</label></td><td>{{ batch_form.source_id }}</td></tr>
+{% if batch_form.source_id.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.source_id.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">condition and handling notes</label></td><td>{{ batch_form.condition_handling }}</td></tr>
+{% if batch_form.condition_handling.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.condition_handling.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td colspan="2">
+<table bgcolor="#FFFFFF" cellpadding="15">
+<tr><td colspan="2"><h4>requests</h4></td></tr>
+<tr><td>
+<label name="">is this batch a request?</label></td><td>{{ batch_form.is_request }}</td></tr>
+{% if batch_form.is_request.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.is_request.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">requestor name</label></td><td>{{ batch_form.requestor }}</td></tr>
+{% if batch_form.requestor.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.requestor.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">request due date</label></td><td>{{ batch_form.request_due_date }}</td></tr>
+{% if batch_form.request_due_date.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.request_due_date.errors }}</p></div></div></td></tr>{% endif %}
+</table>
+<table bgcolor="#FFFFFF" cellpadding="15">
+<tr><td colspan="2"><h4>default metadata</h4></td></tr>
+<tr><td> <label name="">voyager id</label></td><td>{{ batch_form.voyager_id }}</td></tr>
+{% if batch_form.voyager_id.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.voyager_id.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">ead id</label></td><td>{{ batch_form.ead_id }}</td></tr>
+{% if batch_form.ead_id.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.ead_id.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">copyright status</label></td><td>{{ batch_form.copyright_status }}</td></tr>
+{% if batch_form.copyright_status.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.copyright_status.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">publication status</label></td><td>{{ batch_form.publication_status }}</td></tr>
+{% if batch_form.publication_status.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.publication_status.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">copyright holder name</label></td><td>{{ batch_form.copyright_holder_name }}</td></tr>
+{% if batch_form.copyright_holder_name.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.copyright_holder_name.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">permission notes</label></td><td>{{ batch_form.permission_notes }}</td></tr>
+{% if batch_form.permission_notes.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.permission_notes.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">depositor</label></td><td>{{ batch_form.depositor }}</td></tr>
+{% if batch_form.depositor.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.depositor.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">type of resource</label></td><td>{{ batch_form.type_of_resource }}</td></tr>
+{% if batch_form.type_of_resource.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.type_of_resource.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">genre</label></td><td>{{ batch_form.genre }}</td></tr>
+{% if batch_form.genre.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.genre.errors }}</p></div></div></td></tr>{% endif %}
+</table>
+</tr></td>
+<tr><td colspan="2">
+<table bgcolor="#FFFFFF" cellpadding="15">
+<tr><td colspan="2"><h4>scanning specs, if different than best practices</h4></td></tr>
+<tr><td><label name="">file type</label></td><td>{{ batch_form.file_type }}</td></tr>
+{% if batch_form.file_type.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.file_type.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">file naming scheme</label></td><td>{{ batch_form.file_naming }}</td></tr>
+{% if batch_form.file_naming.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.file_naming.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">image resolution (in ppi)</label></td><td>{{ batch_form.resolution_ppi }}</td></tr>
+{% if batch_form.resolution_ppi.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.resolution_ppi.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">image color type and bit depth</label></td><td>{{ batch_form.image_type_bit_depth }}</td></tr>
+{% if batch_form.image_type_bit_depth.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.image_type_bit_depth.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">target output size</label></td><td>{{ batch_form.target_size }}</td></tr>
+{% if batch_form.target_size.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.target_size.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">page edge treatment</label></td><td>{{ batch_form.edge_treatment }}</td></tr>
+{% if batch_form.edge_treatment.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.edge_treatment.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">include a color target?</label></td><td>{{ batch_form.use_color_target }}</td></tr>
+{% if batch_form.use_color_target.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.use_color_target.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">blank / missing page treatment</label></td><td>{{ batch_form.blank_missing_treatment }}</td></tr>
+{% if batch_form.blank_missing_treatment.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.blank_missing_treatment.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">image editing treatment</label></td><td>{{ batch_form.image_editing_treatment }}</td></tr>
+{% if batch_form.image_editing_treatment.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.image_editing_treatment.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">structural metadata treatment</label></td><td>{{ batch_form.structural_metadata_treatment }}</td></tr>
+{% if batch_form.structural_metadata_treatment.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.structural_metadata_treatment.errors }}</p></div></div></td></tr>{% endif %}
+</table>
+</tr></td>
+<tr><td colspan="2"><input type="submit" id="id_submit" value="create batch" /></td></tr>
+</form>
+</table>
+{% endblock %}

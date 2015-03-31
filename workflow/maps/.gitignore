@@ -1,0 +1,5 @@
+config.py
+# compiled
+*.pyc
+# emacs autosave files
+*~

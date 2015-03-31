@@ -1,0 +1,14 @@
+Django==1.1
+MySQL-python==1.2.3c1
+distribute==0.6.45
+fcrepo==1.1-dev
+islandoraUtils==0.1
+lxml==2.3beta1
+py-dom-xpath==0.1
+pyPdf==1.13
+reportlab==2.4
+stevedore==0.8
+virtualenv==1.9.1
+virtualenv-clone==0.2.4
+virtualenvwrapper==4.0
+wsgiref==0.1.2

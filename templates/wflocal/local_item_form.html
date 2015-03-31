@@ -1,0 +1,23 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+<div class="box">
+
+<h3>{{ item.name }} </h3>
+<p><b>identifier:</b> {{ item.do_id }}</p>
+<p><b>item type:</b> {{ item.type.name }}</p> 
+<form method="POST">
+<table>
+{{ form }}		 
+<tr><td colspan="2"> <input type="submit" class="medium" id="id_submit" value="save changes" /></td></tr>
+</table>
+</form>
+
+<!-- END BOX -->
+</div>
+
+
+
+
+{% endblock %}

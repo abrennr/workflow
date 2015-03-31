@@ -1,0 +1,51 @@
+{% extends "wflocal/base.html" %}
+{% load humanize %}
+{% block content %}
+
+
+
+<div id="newSearch"><form name="form" method="get" action="{% url wflocal.views.item %}">look up another item: <input type="text" name="item_id" size="14" /> &nbsp; <button type="submit" class="tiny">go</button></form></div>
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; collection building</div>  
+
+
+
+<div class="box">
+
+<h3>all ({{ collections|length }}) collections</h3>
+<table border="1" cellpadding="5">
+<tr>
+ <th>collection</th>
+ <th>status</th>
+</tr>
+{% for collection in collections %}
+<tr>
+<td valign="top"><b class="medium">{{ collection.c_id }}</b><br/>
+&nbsp;&nbsp;<small>{{ collection.name }}</small><br/>
+<b class="medium">{{ collection.ready_items|intcomma }} / {{ collection.item_count|intcomma }}</b><br/>
+completed / total
+</td>
+<td>
+	<table cellspacing="6" class="striped">
+{% if collection.actions %}
+	{% for action in collection.actions %}
+		<tr><td class="medium">{{ action.item_ready_count|intcomma }}</td><td>need {{ action.action.name }}</td></tr>
+	{% endfor %}
+{% else %}
+	<tr><td colspan="2"><a href="{% url wflocal.views.collection_building_detail collection.c_id %}">set up actions</a></td></tr>
+{% endif %}
+</table>
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+
+<!-- END BOX -->
+</div>
+
+
+
+
+{% endblock %}

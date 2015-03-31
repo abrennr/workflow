@@ -1,0 +1,68 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+
+
+<style type="text/css">
+	#sortable1, #sortable3 { list-style-type: none; margin: 0; padding: 0; float: left; margin-right: 10px; background: #; padding: 5px; width: 143px;}
+	#sortable1 li, #sortable3 li { margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
+	#sortable1, #sortable3 { height: 450px }
+	</style>
+	<script type="text/javascript">
+	$(function() {
+	
+		$("ul.droptrue").sortable({
+			connectWith: 'ul'
+		});
+
+        $("#sortable3").bind('sortupdate', function(event, ui) {
+                var result = $("#sortable3").sortable('toArray');
+		        var joinedResult = result.join(",");
+		        $("#id_actions").val(result);
+		});
+
+		$("#sortable1, #sortable3").disableSelection();
+		
+		$("#id_collection").change( function () { 
+		    date = new Date();
+		    var month = (date.getMonth() + 1);
+		    if (month < 10) { 
+		        month = "0" + month.toString(); 
+		    } else { 
+		        month = month.toString(); 
+		    }
+		    var day = date.getDate()
+   		    if (day < 10) { 
+   		        day = "0" + day.toString(); 
+   		    } else { 
+   		        day = day.toString(); 
+   		    }
+		    var tstamp = date.getFullYear().toString() + month + day;  
+            $("#id_id").val(tstamp + "-" + $("#id_collection").val());
+        });
+
+
+		
+
+	});
+	</script>
+
+
+<div id="pageTitle">workflow &gt; <a href="{% url wflocal.views.main %}">main menu</a> &gt; <a href="{% url wflocal.views.admin %}">admin</a> &gt; problem</div>  
+
+<form method="POST">
+<table class="form" cellspacing="5">
+<tr><td><label name="item">item:</label></td><td>{{ item.do_id }}</td></tr>
+<tr><td><label name="item">user reporting:</label></td><td>{{ user.first_name }}</td></tr>
+{% if form.description.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ form.description.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">description:</label></td><td>{{ form.description }}</td></tr>
+
+<tr><td colspan="2"><input type="hidden" name="item" value="{{ item.do_id }}" /><input type="submit" value="report problem" class="ui-widget" /></td></tr>
+
+</table>
+</form>
+
+
+
+{% endblock %}

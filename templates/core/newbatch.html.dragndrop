@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+<style type="text/css">
+	#sortable1, #sortable3 { list-style-type: none; margin: 0; padding: 0; float: left; margin-right: 10px; background: #; padding: 5px; }
+	#sortable1 li, #sortable3 li { margin: 5px; padding: 5px; font-size: 1em; }
+	#sortable1, #sortable3 {  }
+	</style>
+	<script type="text/javascript">
+	$(function() {
+	
+		$("ul.droptrue").sortable({
+			connectWith: 'ul'
+		});
+
+        $("#sortable3").bind('sortupdate', function(event, ui) {
+                var result = $("#sortable3").sortable('toArray');
+		        var joinedResult = result.join(",");
+		        $("#id_actions").val(result);
+		});
+
+		$("#sortable1, #sortable3").disableSelection();
+		
+		$("#id_collection").change( function () { 
+		    date = new Date();
+		    var month = (date.getMonth() + 1);
+		    if (month < 10) { 
+		        month = "0" + month.toString(); 
+		    } else { 
+		        month = month.toString(); 
+		    }
+		    var day = date.getDate()
+   		    if (day < 10) { 
+   		        day = "0" + day.toString(); 
+   		    } else { 
+   		        day = day.toString(); 
+   		    }
+		    var tstamp = date.getFullYear().toString() + month + day;  
+            $("#id_id").val(tstamp + "-" + $("#id_collection").val());
+        });
+
+
+		
+
+	});
+	</script>
+
+
+<div id="pageTitle">workflow &gt; <a href="/django/workflow/">main menu</a> &gt; <a href="/django/workflow/admin">admin</a> &gt; new batch</div>  
+
+<form enctype="multipart/form-data"  method="POST">
+<table class="form" cellspacing="5">
+{% if batch_form.collection.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.collection.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">collection:</label></td><td>{{ batch_form.collection }}</td></tr>
+{% if batch_form.type.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.type.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">content type:</label></td><td>{{ batch_form.type }}</td></tr>
+{% if batch_form.property_owner.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.property_owner.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">property owner</label></td><td>{{ batch_form.property_owner }}</td></tr>
+{% if batch_form.id.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.id.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">batch identifier</label></td><td>{{ batch_form.id }}</td></tr>
+{% if batch_form.description.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.description.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">notes / description (optional)</label></td><td>{{ batch_form.description }}</td></tr>
+{% if batch_form.file.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.file.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">upload item records<br />(tab-delimited text):</label></td><td>{{ batch_form.file }}</td></tr>
+{% if batch_form.actions.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.actions.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">order actions by dragging<br />from left column into<br />right column below:</label></td><td>{{ batch_form.actions }}</td></tr>
+</table>
+<table>
+<tr><td>	
+    <p>available actions</p>
+    <ul id="sortable1" class="droptrue ui-state-highlight">
+	{% for a in actions %}
+	<li class="button" id="{{ a.id }}">{{ a }}</li>
+	{% endfor %}
+	</ul>
+</td><td valign="top"><ul id="sortable3" class='droptrue ui-state-highlight'>drag here to order</ul></td></tr>
+</table>
+<input type="submit" value="create batch" class="ui-widget" />
+</form>
+
+
+
+{% endblock %}

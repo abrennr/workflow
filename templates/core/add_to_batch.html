@@ -1,0 +1,29 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div id="pageTitle">workflow &gt; <a href="{% url core.views.main %}">main menu</a> &gt; <a href="/django/workflow/batch">batch</a> &gt; <a href="/django/workflow/batch/{{ batch.name }}">{{ batch.name }}</a> &gt; add items</div>  
+{% if form.errors %}<div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ form.errors }}</p></div>{% endif %}
+
+<form enctype="multipart/form-data"  method="POST">
+<table class="form" cellspacing="5" cellpadding="5">
+<tr><td><label name="">batch identifier</label></td><td>{{ batch.name }}</td></tr>
+<tr><td><label name="">collection:</label></td><td>{{ batch.collection.c_id }}</td></tr>
+<tr><td><label name="">content type:</label></td><td>{{ batch.type.name }}</td></tr>
+<tr><td><label name="">property owner</label></td><td>{{ batch.property_owner.name }}</td></tr>
+<tr><td><label name="">notes / description</label></td><td>{{ batch.description }}</td></tr>
+<tr><td><label name="">items</label></td><td>{{ batch.item_count }}</td></tr>
+<tr><td><label name="">sequence of actions</label></td><td>{{ batch.sequence }}</td></tr>
+{% if form.file.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ form.file.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">upload item records<br />(csv text):</label></td><td>{{ form.file }}</td></tr>
+<tr><td colspan="2">
+<input type="hidden" name="name" id="id_name" value="{{ batch.name }}" />
+<input type="hidden" name="collection" id="id_collection" value="{{ batch.collection.id }}" />
+<input type="hidden" name="property_owner" id="id_property_owner" value="{{ batch.property_owner.id }}" />
+<input type="hidden" name="type" id="id_type" value="{{ batch.type.id }}" />
+<input type="hidden" name="description" id="id_description" value="none" />
+<input type="hidden" name="sequence" id="id_sequence" value="{{ batch.sequence.id }}" />
+<input type="submit" id="id_submit" value="add items to batch" /></td></tr>
+</form>
+</table>
+{% endblock %}

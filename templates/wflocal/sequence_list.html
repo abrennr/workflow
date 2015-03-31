@@ -1,0 +1,44 @@
+{% extends "wflocal/base.html" %}
+
+{% block content %}
+
+
+<div id="newSearch">
+  <form name="form" method="get" action="{% url wflocal.views.item %}">
+    look up another item: <input type="text" name="item_id" size="14" /> &nbsp; 
+    <button type="submit" class="tiny">go</button>
+  </form>
+</div>
+
+<div id="pageTitle">
+  workflow &gt;
+  <a href="{% url wflocal.views.main %}">main menu</a> &gt;
+  <a href="{% url wflocal.views.admin %}">admin</a> &gt;
+  sequence
+</div>  
+
+<div id="body_content">
+  <h3>
+    <a href="{% url wflocal.views.sequence_new %}">create a new sequence</a>
+  </h3>
+  <table border="0" cellpadding="5" class="striped">
+    <thead>
+      <tr>
+	    <th>name</th>
+        <th>description</th>
+        <th>actions</th>
+      </tr>
+    </thead>
+
+    {% for s in seqs %}
+    <tr>
+      <td><a href="{% url wflocal.views.sequence_detail s.name %}">{{ s.name }}</a></td>
+      <td>{{ s.description }}</td>
+      <td class="tiny"><ol>{% for a in s.get_ordered_actions %}<li>{{ a.action.name }}</li>{% endfor %}</ol></td>
+    </tr>
+    {% endfor %}
+
+  </table>
+</div>
+
+{% endblock %}

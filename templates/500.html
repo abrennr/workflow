@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>{% block title %}drl workflow{% endblock %}</title>
+    
+    <link rel="stylesheet" type="text/css" href="http://bigfoot.library.pitt.edu/w/workflow/workflow2.css" />
+    <link rel="stylesheet" type="text/css" href="http://bigfoot.library.pitt.edu/css/smoothness/jquery-ui.custom.css" />
+
+
+    <script type="text/javascript" src="http://bigfoot.library.pitt.edu/js/jquery.js" ></script> 
+    <script type="text/javascript" src="http://bigfoot.library.pitt.edu/js/jquery-ui.js" ></script> 
+
+ <script type="text/javascript">
+    
+    {% include "wfweb/main.js" %}
+
+	$(function() {
+	
+	    $("#id_item").focus();
+
+	});
+	</script>
+
+</head>
+
+<body>
+    
+    <div id="container">
+    
+    {% block content %}{% endblock %}
+
+    {% block footer %}
+    
+      <div id="footer">
+      you are logged in as <span class="ui-state-highlight hilight">{{ user.first_name }}</span> &gt; <a href="/workflow/logout/">logout</a>
+      </div>
+    {% endblock %}
+
+    </div>
+
+</body>
+</html>

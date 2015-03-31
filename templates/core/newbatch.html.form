@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+	<script type="text/javascript">
+	$(function() {
+	
+		
+		$("#id_collection").change( function () { 
+		    date = new Date();
+		    var month = (date.getMonth() + 1);
+		    if (month < 10) { 
+		        month = "0" + month.toString(); 
+		    } else { 
+		        month = month.toString(); 
+		    }
+		    var day = date.getDate()
+   		    if (day < 10) { 
+   		        day = "0" + day.toString(); 
+   		    } else { 
+   		        day = day.toString(); 
+   		    }
+		    var tstamp = date.getFullYear().toString() + month + day;  
+            $("#id_id").val(tstamp + "-" + $("#id_collection").val());
+        });
+
+
+		
+
+	});
+	</script>
+
+
+<div id="pageTitle">workflow &gt; <a href="/django/workflow/">main menu</a> &gt; <a href="/django/workflow/admin">admin</a> &gt; new batch</div>  
+
+<form enctype="multipart/form-data"  method="POST">
+<table class="form" cellspacing="5" cellpadding="5">
+{% if batch_form.collection.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.collection.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">collection:</label></td><td>{{ batch_form.collection }}</td></tr>
+{% if batch_form.type.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.type.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">content type:</label></td><td>{{ batch_form.type }}</td></tr>
+{% if batch_form.property_owner.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.property_owner.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">property owner</label></td><td>{{ batch_form.property_owner }}</td></tr>
+{% if batch_form.id.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.id.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">batch identifier</label></td><td>{{ batch_form.id }}</td></tr>
+{% if batch_form.description.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.description.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">notes / description (optional)</label></td><td>{{ batch_form.description }}</td></tr>
+{% if batch_form.actions.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.actions.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td>actions</td>
+<td bgcolor="#EFDFDF">
+<table>
+<tr><td><p>order</p><td><p>action</p></tr>
+<tr><td>1</td><td><select>{% for a in actions %}<option id="{{ a.id }}">{{ a }}</option>{% endfor %}</select></td></tr>
+</table>
+<a href="#">add another action</a> | <a href="#">remove last action</a>
+</td></tr>
+{% if batch_form.file.errors %}<tr><td colspan="2"><div class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>{{ batch_form.file.errors }}</p></div></div></td></tr>{% endif %}
+<tr><td><label name="">upload item records<br />(tab-delimited text):</label></td><td>{{ batch_form.file }}</td></tr>
+<tr><td colspan="2"><input type="submit" value="create batch" class="ui-widget" /></td></tr>
+</form>
+</table>
+
+
+{% endblock %}

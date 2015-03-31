@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+{% block content %}
+
+
+
+<div id="newSearch"><form name="form" method="get" action="/django/workflow/item/">look up another item: <input type="text" name="item_id" size="14" /> &nbsp; <button type="submit" class="tiny">go</button></form></div>
+
+<div id="pageTitle">workflow &gt; <a href="{% url core.views.main %}">main menu</a> &gt; collection</div>  
+
+
+
+<div class="box">
+
+<h3>all ({{ collections|length }}) collections</h3>
+<table border="0" cellpadding="5" class="striped">
+<tr>
+ <th>collection</th>
+ <th>items</th>
+ <th>batch(es)</th>
+ <th>status</th>
+
+</tr>
+
+{% for collection in collections %}
+<tr>
+<td><b>{{ collection.c_id }}</b> <small>/ {{ collection.name }}</small></td>
+<td align="right" halign="center"><a href="/django/workflow/collection/{{ collection.c_id }}">{{ collection.item_count|intcomma }}</a></td>
+<td align="right" halign="center"><a href="/django/workflow/batch/all/?collection={{ collection.id }}">{{ collection.batch_count }}</a></td>
+<td class="tiny">
+<ul>
+{% if collection.ready_actions %}
+	{% for action in collection.ready_actions %}
+		<li><a href="/django/workflow/collection/{{ collection.c_id }}/?ready_action={{ action.id }}">{{ action }} ({{ action.count }})</a></li>
+	{% endfor %}
+{% else %}
+	<span class="hilight"> - </span>
+{% endif %}
+</ul></td>
+</tr>
+{% endfor %}
+
+</table>
+
+
+<!-- END BOX -->
+</div>
+
+
+
+
+{% endblock %}
